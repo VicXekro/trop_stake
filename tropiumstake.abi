@@ -4,6 +4,64 @@
     "types": [],
     "structs": [
         {
+            "name": "admin",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "banned",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "banstaker",
+            "base": "",
+            "fields": [
+                {
+                    "name": "admin",
+                    "type": "name"
+                },
+                {
+                    "name": "username",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "letinstaker",
+            "base": "",
+            "fields": [
+                {
+                    "name": "admin",
+                    "type": "name"
+                },
+                {
+                    "name": "username",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "regadmin",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                }
+            ]
+        },
+        {
             "name": "regstaker",
             "base": "",
             "fields": [
@@ -44,6 +102,21 @@
     ],
     "actions": [
         {
+            "name": "banstaker",
+            "type": "banstaker",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "letinstaker",
+            "type": "letinstaker",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "regadmin",
+            "type": "regadmin",
+            "ricardian_contract": ""
+        },
+        {
             "name": "regstaker",
             "type": "regstaker",
             "ricardian_contract": ""
@@ -55,6 +128,20 @@
         }
     ],
     "tables": [
+        {
+            "name": "adminlist",
+            "type": "admin",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "bannedlist",
+            "type": "banned",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
         {
             "name": "stakerlist",
             "type": "staker",

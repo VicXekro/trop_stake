@@ -8,18 +8,25 @@
 #include <eosio/asset.hpp>
 #include <eosio/system.hpp>
 #include <eosio/transaction.hpp>
-#include <eosio.token.hpp>
+
 
 using namespace std;
 using namespace eosio;
+
+/**
+* Requirements: for this contract, please enable the eosio.code permission
+*/
 
 CONTRACT tropiumstake : public contract {
   public:
     using contract::contract;
 
+      //TODO: change ("TRPM",0) to ("TRPM",4)
      tropiumstake(name receiver, name code, datastream<const char*> ds):
         contract(receiver, code, ds),
         _staker_list(receiver, receiver.value),
+        _banned_list(receiver, receiver.value),
+        _admin_list(receiver, receiver.value),
         tropium_symb("TRPM",0){} //thre precision of the symbol is the decimal precision of
                                   //the created token
 
@@ -39,17 +46,31 @@ CONTRACT tropiumstake : public contract {
     void stake (name username, name receiver, asset quantity, string msg);
 
     /**
-    * Check the "standing" of a staker in our staking smart contract
-    * i.e., if the account is registered or not, if yes, then show the staked amount. Also check if account is banned
-    * @param: username, the account whose standing is checked.
+    * Used to ban a staker that hasn't respected the regulations. Funds are not reimbursed 
+    * this action is performed by and administrator
+    * @param: username, the account that will be banned.
+    * @param: admin, an administrator in the system
     */
-    //ACTION checkstaker (name username);
+    ACTION banstaker (name admin, name username);
+
+    /**
+    * Used to reinstate a banned user. After this operation, user should re-register
+    * @param: username, the account that was banned.
+    * @param: admin, an administrator in the system
+    */
+    ACTION letinstaker(name admin, name username);
 
     /*
     * Cancel the stake of a user and remove him from the table, refund the held amount
     * @param: username, the account wanting to unstake its funds. 
     */
     ACTION unstake (name username);
+
+    /**
+    * Register an administrator. This function is only executable by the owner of the smart contract account
+    * @param: username, the account that should be registered as an admin
+    */
+    ACTION regadmin (name username);
 
   private:
       // table used to maintain the list of staking nodes
@@ -59,21 +80,30 @@ CONTRACT tropiumstake : public contract {
           bool isstaked; //if the users has already staked funds or not
           uint64_t primary_key() const {return username.value;}
         };
-
         typedef eosio::multi_index<name("stakerlist"), staker> stakers;
-
         stakers _staker_list;
 
         //the symbol of the tropium token (TRPM, 0.0000)
         const symbol tropium_symb;
 
-        /*// table used to maintain banned people. Doctors approval needed to remove them from the list
+        // table used to maintain banned people. Doctors approval needed to remove them from the list
         TABLE banned{
           name username;
           uint64_t primary_key() const {return username.value;}
-        }*/
+        };
+        typedef eosio::multi_index<name("bannedlist"), banned> banned_stakers;
+        banned_stakers _banned_list;  
 
-        //void isbanned(name username);
 
+        // table used to maintain the list of administrators (doctors, physicians, etc.)
+        // they can ban users or reinstate them
+        TABLE admin{
+          name username;
+          uint64_t primary_key() const {return username.value;}
+        };
+        typedef eosio::multi_index<name("adminlist"), admin> admins;
+        admins _admin_list;
 
+        //check if a user is an admin
+        void is_admin(name username);
 };
