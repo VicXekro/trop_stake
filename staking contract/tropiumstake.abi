@@ -20,6 +20,10 @@
                 {
                     "name": "username",
                     "type": "name"
+                },
+                {
+                    "name": "fund_held",
+                    "type": "asset"
                 }
             ]
         },
@@ -27,10 +31,6 @@
             "name": "banstaker",
             "base": "",
             "fields": [
-                {
-                    "name": "admin",
-                    "type": "name"
-                },
                 {
                     "name": "username",
                     "type": "name"
@@ -48,6 +48,10 @@
                 {
                     "name": "username",
                     "type": "name"
+                },
+                {
+                    "name": "is_given_back",
+                    "type": "bool"
                 }
             ]
         },

@@ -52,36 +52,37 @@ ACTION tropiumstake::unstake (name username){
   check(itr != _staker_list.end(), "Your are not a staker, please register first");
   print(get_self());
 
-  //TODO: Chance contract name from test1 to eosio.token during deployment
+  /*//TODO: Chance contract name from test1 to eosio.token during deployment
   action{
         permission_level{get_self(), "active"_n},
         "test1"_n,
         "transfer"_n,
         std::make_tuple(get_self(), username, itr->fund_staked, std::string("Your fund have been released"))
-      }.send();
+      }.send();*/
+
+  in_contract_transfer(username,itr->fund_staked,string("Your funds have been transfered"));    
 
   _staker_list.erase(itr);
   require_recipient(username);
 }
 
-ACTION tropiumstake::banstaker(name admin, name username){
-  require_auth(admin);
-  
-  is_admin(admin);
+ACTION tropiumstake::banstaker(name username){
+  require_auth(get_self());
 
   auto itr = _staker_list.find(username.value);
   check(itr != _staker_list.end(), "That user is not a staker");
 
-  //remove staker from staker list without reimbursment
-  _staker_list.erase(itr);
-
   //registering user in the banned list
   _banned_list.emplace(username, [&](auto& row){
   row.username = username;
+  row.fund_held = itr->fund_staked;
   });
+
+  //remove staker from staker list without reimbursment
+  _staker_list.erase(itr);
 }
 
-ACTION tropiumstake::letinstaker(name admin, name username){
+ACTION tropiumstake::letinstaker(name admin, name username, bool is_given_back){
   require_auth(admin);
 
   is_admin(admin);
@@ -89,6 +90,15 @@ ACTION tropiumstake::letinstaker(name admin, name username){
   auto itr = _banned_list.find(username.value);
   check(itr != _banned_list.end(), "This user was not banned");
 
+  if(is_given_back){
+    //return the funds of the user
+    in_contract_transfer(username, itr->fund_held, string("Returned the funds"));
+  
+  }else{
+    // keep the funds of the user
+    //TODO change test2  to pool account
+    in_contract_transfer("test2"_n, itr->fund_held, string("Returned the funds"));
+  }
   //remove user from banned list
   _banned_list.erase(itr);
 
@@ -107,4 +117,15 @@ ACTION tropiumstake::regadmin(name username){
 void tropiumstake::is_admin(name username){
   auto itr_admin = _admin_list.find(username.value);
   check(itr_admin != _admin_list.end(), "you are not an admin");
+}
+
+void tropiumstake::in_contract_transfer(name recipient, asset amount, string msg){
+
+  //TODO: Chance contract name from test1 to eosio.token during deployment
+  action{
+        permission_level{get_self(), "active"_n},
+        "test1"_n,
+        "transfer"_n,
+        std::make_tuple(get_self(), recipient, amount, msg)
+      }.send();
 }

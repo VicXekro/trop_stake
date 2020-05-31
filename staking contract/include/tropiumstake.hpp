@@ -47,18 +47,20 @@ CONTRACT tropiumstake : public contract {
 
     /**
     * Used to ban a staker that hasn't respected the regulations. Funds are not reimbursed 
-    * this action is performed by and administrator
+    * this action is performed by the smart contract account
     * @param: username, the account that will be banned.
     * @param: admin, an administrator in the system
     */
-    ACTION banstaker (name admin, name username);
+    ACTION banstaker (name username);
 
     /**
     * Used to reinstate a banned user. After this operation, user should re-register
+    * the admin should also decide if the fund should be held or reimbursed 
     * @param: username, the account that was banned.
     * @param: admin, an administrator in the system
+    * @param: is_given_back, if True, send back funds of username else keep them.
     */
-    ACTION letinstaker(name admin, name username);
+    ACTION letinstaker(name admin, name username, bool is_given_back);
 
     /*
     * Cancel the stake of a user and remove him from the table, refund the held amount
@@ -89,6 +91,7 @@ CONTRACT tropiumstake : public contract {
         // table used to maintain banned people. Doctors approval needed to remove them from the list
         TABLE banned{
           name username;
+          asset fund_held; //funds that were staked by the user
           uint64_t primary_key() const {return username.value;}
         };
         typedef eosio::multi_index<name("bannedlist"), banned> banned_stakers;
@@ -106,4 +109,7 @@ CONTRACT tropiumstake : public contract {
 
         //check if a user is an admin
         void is_admin(name username);
+
+        //called to transfer funds held by the smart contract to recipient
+        void in_contract_transfer(name recipient, asset amount, string msg);
 };

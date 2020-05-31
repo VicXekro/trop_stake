@@ -20,3 +20,6 @@ in the staking operation
 * __regadmin__: register a user as an admin. Only executable by the owner of this smart contract
 
 ## ICO contract
+
+## Notice
+*Before deployment, change all TODO accordingly*
