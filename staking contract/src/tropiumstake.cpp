@@ -73,7 +73,7 @@ ACTION tropiumstake::banstaker(name username){
   check(itr != _staker_list.end(), "That user is not a staker");
 
   //registering user in the banned list
-  _banned_list.emplace(username, [&](auto& row){
+  _banned_list.emplace(get_self(), [&](auto& row){
   row.username = username;
   row.fund_held = itr->fund_staked;
   });
@@ -106,10 +106,13 @@ ACTION tropiumstake::letinstaker(name admin, name username, bool is_given_back){
 
 ACTION tropiumstake::regadmin(name username){
   require_auth(get_self());
+
+  check(is_account(username), "Given username is not an account on the network");
+
   auto itr_admin = _admin_list.find(username.value);
   check(itr_admin == _admin_list.end(), "That account is already an administrator in the system");
 
-  _admin_list.emplace(username,[&](auto& row){
+  _admin_list.emplace(get_self(),[&](auto& row){
     row.username = username;
   });
 }
