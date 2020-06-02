@@ -4,6 +4,16 @@
     "types": [],
     "structs": [
         {
+            "name": "addadmin",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                }
+            ]
+        },
+        {
             "name": "admin",
             "base": "",
             "fields": [
@@ -56,7 +66,7 @@
             ]
         },
         {
-            "name": "regadmin",
+            "name": "regstaker",
             "base": "",
             "fields": [
                 {
@@ -66,7 +76,7 @@
             ]
         },
         {
-            "name": "regstaker",
+            "name": "removeadmin",
             "base": "",
             "fields": [
                 {
@@ -106,6 +116,11 @@
     ],
     "actions": [
         {
+            "name": "addadmin",
+            "type": "addadmin",
+            "ricardian_contract": ""
+        },
+        {
             "name": "banstaker",
             "type": "banstaker",
             "ricardian_contract": ""
@@ -116,13 +131,13 @@
             "ricardian_contract": ""
         },
         {
-            "name": "regadmin",
-            "type": "regadmin",
+            "name": "regstaker",
+            "type": "regstaker",
             "ricardian_contract": ""
         },
         {
-            "name": "regstaker",
-            "type": "regstaker",
+            "name": "removeadmin",
+            "type": "removeadmin",
             "ricardian_contract": ""
         },
         {

@@ -25,6 +25,7 @@ void tropiumstake::stake(name username, name receiver, asset quantity, string ms
 
   check(itr != _staker_list.end(), "You cannot stake, you are not yet registered");
   check(quantity.symbol == tropium_symb, "wrong token used");
+  //check( msg.size() <= 256, "msg has more than 256 bytes" );
   check(msg == "increment" || msg =="start", "Please use \"increment\" to increase your stake or \"start\" to deposit your first stake");
   
   if(msg == "start" && itr->isstaked == false){
@@ -51,14 +52,6 @@ ACTION tropiumstake::unstake (name username){
   auto itr = _staker_list.find(username.value);
   check(itr != _staker_list.end(), "Your are not a staker, please register first");
   print(get_self());
-
-  /*//TODO: Chance contract name from test1 to eosio.token during deployment
-  action{
-        permission_level{get_self(), "active"_n},
-        "test1"_n,
-        "transfer"_n,
-        std::make_tuple(get_self(), username, itr->fund_staked, std::string("Your fund have been released"))
-      }.send();*/
 
   in_contract_transfer(username,itr->fund_staked,string("Your funds have been transfered"));    
 
@@ -97,14 +90,14 @@ ACTION tropiumstake::letinstaker(name admin, name username, bool is_given_back){
   }else{
     // keep the funds of the user
     //TODO change test2  to pool account
-    in_contract_transfer("test2"_n, itr->fund_held, string("Returned the funds"));
+    in_contract_transfer("test2"_n, itr->fund_held, string("Kept funds"));
   }
   //remove user from banned list
   _banned_list.erase(itr);
 
 }
 
-ACTION tropiumstake::regadmin(name username){
+ACTION tropiumstake::addadmin(name username){
   require_auth(get_self());
 
   check(is_account(username), "Given username is not an account on the network");
@@ -115,6 +108,16 @@ ACTION tropiumstake::regadmin(name username){
   _admin_list.emplace(get_self(),[&](auto& row){
     row.username = username;
   });
+}
+
+ACTION tropiumstake::removeadmin(name username){
+  require_auth(get_self());
+
+  auto itr_admin = _admin_list.find(username.value);
+  check(itr_admin != _admin_list.end(), "That account is not an administrator");
+
+  _admin_list.erase(itr_admin);
+
 }
 
 void tropiumstake::is_admin(name username){

@@ -72,7 +72,14 @@ CONTRACT tropiumstake : public contract {
     * Register an administrator. This function is only executable by the owner of the smart contract account
     * @param: username, the account that should be registered as an admin
     */
-    ACTION regadmin (name username);
+    ACTION addadmin (name username);
+
+    /**
+    * Remove a user from the list of administrator. This function can only be executed by the
+    * smart contract accoun  
+    * @param: username, the account that should be removed from the admin_list 
+    */
+    ACTION removeadmin(name username);
 
   private:
       // table used to maintain the list of staking nodes
